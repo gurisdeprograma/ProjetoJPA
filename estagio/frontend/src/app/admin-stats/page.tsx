@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from './admin-stats.module.css';
 
 export default function AdminStatsPage() {
@@ -46,7 +47,7 @@ export default function AdminStatsPage() {
 
   return (
     <div className={styles.container}>
-      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <Link href="/dashboard" className={styles.backBtn}>← Voltar ao Dashboard</Link>
       <h1 className={styles.pageTitle}>Dashboard Administrativo</h1>
       {error && <div className={styles.error}>{error}</div>}
 
@@ -76,9 +77,9 @@ export default function AdminStatsPage() {
             <h3>Vagas por Área</h3>
             {stats.vagasPorArea && Array.isArray(stats.vagasPorArea) && (
               <ul className={styles.list}>
-                {stats.vagasPorArea.map((item: any) => (
-                  <li key={item.areaId}>
-                    {item.areaNome || item.area} — <strong>{item.count}</strong>
+                {stats.vagasPorArea.map((item: any, idx: number) => (
+                  <li key={idx}>
+                    {item[0] || 'Sem área'} — <strong>{item[1]}</strong>
                   </li>
                 ))}
               </ul>

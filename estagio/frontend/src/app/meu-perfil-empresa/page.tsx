@@ -13,6 +13,7 @@ interface Empresa {
     cnpj: string;
     endereco: string;
     descricao?: string;
+    areasAtuacao?: { id: number; nome: string }[];
 }
 
 export default function MeuPerfilEmpresaPage() {
@@ -50,7 +51,6 @@ export default function MeuPerfilEmpresaPage() {
             try {
                 const token = localStorage.getItem('token');
 
-                // Buscar dados da empresa
                 const response = await fetch(`/api/empresas/${userObj.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -62,13 +62,13 @@ export default function MeuPerfilEmpresaPage() {
                 const data = await response.json();
                 setEmpresa(data);
                 setFormData({
-                    nome: data.nome,
+                    nome: data.nome || '',
                     telefone: data.telefone || '',
                     endereco: data.endereco || '',
                     descricao: data.descricao || ''
                 });
                 setAreasAtuacao(data.areasAtuacao?.map((a: any) => a.id) || []);
-                // Buscar todas as áreas de interesse
+
                 const areasResponse = await fetch('/api/areas-interesse', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -77,7 +77,6 @@ export default function MeuPerfilEmpresaPage() {
                     setTodasAreas(areasData);
                 }
 
-                // Buscar vagas da empresa
                 const vagasResponse = await fetch(`/api/vagas-estagio/empresa/${userObj.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -127,8 +126,8 @@ export default function MeuPerfilEmpresaPage() {
                     nome: formData.nome,
                     telefone: formData.telefone,
                     endereco: formData.endereco,
-                    descricao: formData.descricao
-                    ,areasAtuacao: areasAtuacao.map(id => ({ id }))
+                    descricao: formData.descricao,
+                    areasAtuacao: areasAtuacao.map(id => ({ id }))
                 })
             });
 
@@ -331,15 +330,13 @@ export default function MeuPerfilEmpresaPage() {
                             </div>
                         )}
 
-                        {areasAtuacao && areasAtuacao.length > 0 && (
+                        {empresa.areasAtuacao && empresa.areasAtuacao.length > 0 && (
                             <div className={styles.infoRow}>
                                 <span className={styles.label}>Áreas de Atuação:</span>
                                 <div className={styles.areasDisplay}>
-                                    {todasAreas
-                                        .filter(a => areasAtuacao.includes(a.id))
-                                        .map(a => (
-                                            <span key={a.id} className={styles.areaBadge}>{a.nome}</span>
-                                        ))}
+                                    {empresa.areasAtuacao.map(a => (
+                                        <span key={a.id} className={styles.areaBadge}>{a.nome}</span>
+                                    ))}
                                 </div>
                             </div>
                         )}

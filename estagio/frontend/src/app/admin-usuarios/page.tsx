@@ -35,7 +35,6 @@ export default function AdminUsuariosPage() {
 
   const fetchUsuarios = async (token: string) => {
     try {
-      // buscar estudantes, empresas e administradores e unificar
       const [estRes, empRes, admRes] = await Promise.all([
         fetch('/api/estudantes', { headers: { Authorization: `Bearer ${token}` } }),
         fetch('/api/empresas', { headers: { Authorization: `Bearer ${token}` } }),
@@ -60,11 +59,16 @@ export default function AdminUsuariosPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, role: string) => {
     if (!confirm('Remover este usuário? Esta ação é irreversível.')) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`/api/usuarios/${id}`, {
+      let endpoint = '';
+      if (role === 'estudante') endpoint = `/api/estudantes/${id}`;
+      else if (role === 'empresa') endpoint = `/api/empresas/${id}`;
+      else if (role === 'admin') endpoint = `/api/administradores/${id}`;
+
+      const res = await fetch(endpoint, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -80,7 +84,7 @@ export default function AdminUsuariosPage() {
 
   return (
     <div className={styles.container}>
-      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <a href="/dashboard" className={styles.backBtn}>← Voltar ao Dashboard</a>
       <h1 className={styles.pageTitle}>Gerenciar Usuários</h1>
       {error && <div className={styles.error}>{error}</div>}
 
@@ -94,11 +98,11 @@ export default function AdminUsuariosPage() {
             <div>Ações</div>
           </div>
           {usuarios.map((u) => (
-            <div key={u.id} className={styles.row}>
+            <div key={`${u.role}-${u.id}`} className={styles.row}>
               <div>{u.username}</div>
               <div>{u.role}</div>
               <div>
-                <button className={styles.deleteBtn} onClick={() => handleDelete(u.id)}>Remover</button>
+                <button className={styles.deleteBtn} onClick={() => handleDelete(u.id, u.role)}>Remover</button>
               </div>
             </div>
           ))}

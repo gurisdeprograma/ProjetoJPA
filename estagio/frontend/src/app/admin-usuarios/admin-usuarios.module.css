@@ -1,4 +1,19 @@
-.backBtn { display: inline-block; margin-bottom: 12px; padding: 8px 12px; background: #f0f0f0; color: #333; text-decoration: none; border-radius: 6px; }
+/* admin-usuarios.module.css - Completo */
+.backBtn { 
+  display: inline-block; 
+  margin-bottom: 12px; 
+  padding: 8px 12px; 
+  background: #f0f0f0; 
+  color: #333; 
+  text-decoration: none; 
+  border-radius: 6px; 
+  transition: background-color 0.3s;
+}
+
+.backBtn:hover {
+  background-color: #e0e0e0;
+}
+
 .container {
   max-width: 1000px;
   margin: 20px auto;

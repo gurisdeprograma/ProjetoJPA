@@ -81,6 +81,59 @@
   line-height: 1.6;
 }
 
+/* Ação Box (Inscrição) - MELHORADO */
+.acaoBox {
+  margin: 30px 0 0 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  gap: 15px;
+}
+
+.inscreverBtn {
+  flex: 1;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.inscreverBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.inscreverBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.jaInscrito {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background-color: #d1fae5;
+  border-radius: 8px;
+  border: 2px solid #10b981;
+}
+
+.jaInscrito p {
+  margin: 0;
+  color: #065f46;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .avaliacoesContainer {
   background: white;
   border-radius: 12px;
@@ -279,6 +332,16 @@
   padding: 16px;
   border-radius: 8px;
   border-left: 4px solid #ef4444;
+}
+
+.infoMessage {
+  text-align: center;
+  padding: 15px;
+  background: #f0f9ff;
+  border: 2px solid #2563eb;
+  border-radius: 8px;
+  color: #1e40af;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {

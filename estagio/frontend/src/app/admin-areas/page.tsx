@@ -81,7 +81,7 @@ export default function AdminAreasPage() {
 
   return (
     <div className={styles.container}>
-      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <a href="/dashboard" className={styles.backBtn}>← Voltar ao Dashboard</a>
       <h1 className={styles.pageTitle}>Gerenciar Áreas de Interesse</h1>
       {error && <div className={styles.error}>{error}</div>}
 

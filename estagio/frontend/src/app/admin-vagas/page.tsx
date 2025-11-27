@@ -23,17 +23,22 @@ export default function AdminVagasPage() {
 
   const fetchVagas = async (token: string) => {
     try {
+      // Buscar TODAS as vagas (abertas e encerradas)
       const res = await fetch('/api/vagas-estagio/abertas', { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Erro ao buscar vagas');
-      const abertas = await res.json();
-      // também buscar vagas encerradas
+      const abertas = res.ok ? await res.json() : [];
+      
       const res2 = await fetch('/api/vagas-estagio', { headers: { Authorization: `Bearer ${token}` } });
       const todas = res2.ok ? await res2.json() : [];
-      // unificar
-      const all = Array.isArray(todas) ? todas : abertas;
-      setVagas(all);
-    } catch (err) { console.error(err); setError('Não foi possível carregar vagas'); }
-    finally { setLoading(false); }
+      
+      // Se a API /api/vagas-estagio retornar todas, usar ela. Senão, usar só abertas.
+      const allVagas = Array.isArray(todas) && todas.length > 0 ? todas : abertas;
+      setVagas(allVagas);
+    } catch (err) { 
+      console.error(err); 
+      setError('Não foi possível carregar vagas'); 
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -61,8 +66,8 @@ export default function AdminVagasPage() {
 
   return (
     <div className={styles.container}>
-      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
-      <h1 className={styles.pageTitle}>Gerenciar Vagas</h1>
+      <a href="/dashboard" className={styles.backBtn}>← Voltar ao Dashboard</a>
+      <h1 className={styles.pageTitle}>Gerenciar Todas as Vagas</h1>
       {error && <div className={styles.error}>{error}</div>}
 
       {vagas.length === 0 ? (

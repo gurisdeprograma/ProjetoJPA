@@ -31,6 +31,13 @@ public class EmpresaController {
         return empresaRepository.findAll();
     }
 
+    // Retorna uma empresa específica pelo ID.
+    @GetMapping("/{id}")
+    public Empresa getById(@PathVariable Long id) {
+        return empresaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+    }
+
     // Cria uma nova empresa. Valida unicidade de CNPJ e email, criptografa a senha.
     @PostMapping
     public Empresa create(@RequestBody Empresa empresa) {

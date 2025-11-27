@@ -56,7 +56,6 @@ export default function VagaDetalhePage() {
                 const userObj = JSON.parse(user);
                 setUser(userObj);
                 
-                // Buscar vaga usando rewrite do Next.js (/api -> http://localhost:8080/api)
                 const token = localStorage.getItem('token');
                 const response = await fetch(`/api/vagas-estagio/${vagaId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -64,7 +63,6 @@ export default function VagaDetalhePage() {
                 const vagaData = await response.json();
                 setVaga(vagaData);
 
-                // Buscar avaliações e estatísticas
                 const statsResponse = await fetch(`/api/avaliacoes/vaga/${vagaId}/estatisticas`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -72,8 +70,6 @@ export default function VagaDetalhePage() {
                 setAvaliacoes(statsData.avaliacoes);
                 setMedia(statsData.mediaNotas || 0);
 
-                // Verificar se já está inscrito
-                // buscar inscrições só se o usuário for um estudante
                 if (userObj.role === 'estudante') {
                     const inscricoesResponse = await fetch(`/api/inscricoes/estudante/${userObj.id}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -154,13 +150,13 @@ export default function VagaDetalhePage() {
             if (response.ok) {
                 setNota(5);
                 setComentario('');
-                // Recarregar avaliações
                 const statsResponse = await fetch(`/api/avaliacoes/vaga/${vagaId}/estatisticas`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const statsData = await statsResponse.json();
                 setAvaliacoes(statsData.avaliacoes);
                 setMedia(statsData.mediaNotas || 0);
+                alert('Avaliação enviada com sucesso! ⭐');
             } else {
                 alert('Erro ao enviar avaliação');
             }
@@ -177,7 +173,9 @@ export default function VagaDetalhePage() {
 
     return (
         <div className={styles.container}>
-            <Link href="/vagas" className={styles.backBtn}>← Voltar para Vagas</Link>
+            <Link href={user?.role === 'empresa' ? '/minhas-vagas' : '/vagas'} className={styles.backBtn}>
+                ← Voltar
+            </Link>
 
             <div className={styles.vagaDetalhes}>
                 <h1 className={styles.titulo}>{vaga.titulo || 'Vaga sem título'}</h1>
@@ -215,27 +213,23 @@ export default function VagaDetalhePage() {
                     <p>{vaga.descricao || 'Sem descrição disponível'}</p>
                 </div>
 
+                {user && user.role === 'estudante' && (
                     <div className={styles.acaoBox}>
-                    {user && user.role === 'estudante' ? (
-                        jaInscrito ? (
-                        <div className={styles.jaInscrito}>
-                            <p>✅ Você já está inscrito nesta vaga</p>
-                        </div>
+                        {jaInscrito ? (
+                            <div className={styles.jaInscrito}>
+                                <p>✅ Você já está inscrito nesta vaga</p>
+                            </div>
                         ) : (
-                        <button
-                            onClick={handleInscricao}
-                            disabled={inscrevendo}
-                            className={styles.inscreverBtn}
-                        >
-                            {inscrevendo ? 'Inscrevendo...' : '📝 Se Inscrever Nesta Vaga'}
-                        </button>
-                        )
-                    ) : (
-                        <div className={styles.infoMessage}>
-                            <p>Apenas estudantes podem se inscrever nesta vaga.</p>
-                        </div>
-                    )}
-                </div>
+                            <button
+                                onClick={handleInscricao}
+                                disabled={inscrevendo}
+                                className={styles.inscreverBtn}
+                            >
+                                {inscrevendo ? 'Inscrevendo...' : '📝 Se Inscrever Nesta Vaga'}
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className={styles.avaliacoesContainer}>
@@ -250,43 +244,45 @@ export default function VagaDetalhePage() {
                     </div>
                 </div>
 
-                <form onSubmit={handleAvaliacao} className={styles.avaliacaoForm}>
-                    <h3>Deixe sua avaliação</h3>
-                    
-                    <div className={styles.inputGroup}>
-                        <label>Nota (1-5 estrelas)</label>
-                        <div className={styles.notaInput}>
-                            {[1, 2, 3, 4, 5].map((n) => (
-                                <button
-                                    key={n}
-                                    type="button"
-                                    className={`${styles.estrela} ${nota >= n ? styles.ativo : ''}`}
-                                    onClick={() => setNota(n)}
-                                >
-                                    ⭐
-                                </button>
-                            ))}
+                {user && user.role === 'estudante' && (
+                    <form onSubmit={handleAvaliacao} className={styles.avaliacaoForm}>
+                        <h3>Deixe sua avaliação</h3>
+                        
+                        <div className={styles.inputGroup}>
+                            <label>Nota (1-5 estrelas)</label>
+                            <div className={styles.notaInput}>
+                                {[1, 2, 3, 4, 5].map((n) => (
+                                    <button
+                                        key={n}
+                                        type="button"
+                                        className={`${styles.estrela} ${nota >= n ? styles.ativo : ''}`}
+                                        onClick={() => setNota(n)}
+                                    >
+                                        ⭐
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="comentario">Comentário (opcional)</label>
-                        <textarea
-                            id="comentario"
-                            value={comentario}
-                            onChange={(e) => setComentario(e.target.value)}
-                            placeholder="Compartilhe sua experiência..."
-                            maxLength={500}
-                            rows={4}
-                            className={styles.textarea}
-                        />
-                        <small>{comentario.length}/500</small>
-                    </div>
+                        <div className={styles.inputGroup}>
+                            <label htmlFor="comentario">Comentário (opcional)</label>
+                            <textarea
+                                id="comentario"
+                                value={comentario}
+                                onChange={(e) => setComentario(e.target.value)}
+                                placeholder="Compartilhe sua experiência..."
+                                maxLength={500}
+                                rows={4}
+                                className={styles.textarea}
+                            />
+                            <small>{comentario.length}/500</small>
+                        </div>
 
-                    <button type="submit" disabled={avaliando} className={styles.submitBtn}>
-                        {avaliando ? 'Enviando...' : 'Enviar Avaliação'}
-                    </button>
-                </form>
+                        <button type="submit" disabled={avaliando} className={styles.submitBtn}>
+                            {avaliando ? 'Enviando...' : 'Enviar Avaliação'}
+                        </button>
+                    </form>
+                )}
 
                 <div className={styles.avaliacoesList}>
                     {avaliacoes.length === 0 ? (

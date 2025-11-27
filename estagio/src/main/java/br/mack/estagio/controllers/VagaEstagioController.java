@@ -18,6 +18,13 @@ public class VagaEstagioController {
     @Autowired
     private VagaEstagioRepository vagaEstagioRepository;
 
+    // Retorna TODAS as vagas (abertas e encerradas) - Apenas para ADMIN
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<VagaEstagio> getAll() {
+        return vagaEstagioRepository.findAll();
+    }
+
     // Retorna uma vaga específica pelo ID.
     @GetMapping("/{id}")
     public VagaEstagio getById(@PathVariable Long id) {
@@ -65,6 +72,7 @@ public class VagaEstagioController {
 
     // Deleta uma vaga de estágio pelo ID.
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         vagaEstagioRepository.deleteById(id);
     }
