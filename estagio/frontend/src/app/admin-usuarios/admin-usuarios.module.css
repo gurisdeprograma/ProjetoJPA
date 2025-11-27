@@ -1,3 +1,4 @@
+.backBtn { display: inline-block; margin-bottom: 12px; padding: 8px 12px; background: #f0f0f0; color: #333; text-decoration: none; border-radius: 6px; }
 .container {
   max-width: 1000px;
   margin: 20px auto;
@@ -7,7 +8,7 @@
     sans-serif;
 }
 
-h1 {
+.pageTitle {
   margin: 0 0 20px 0;
   color: #333;
 }

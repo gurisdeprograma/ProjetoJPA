@@ -61,7 +61,8 @@ export default function AdminVagasPage() {
 
   return (
     <div className={styles.container}>
-      <h1>Gerenciar Vagas</h1>
+      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <h1 className={styles.pageTitle}>Gerenciar Vagas</h1>
       {error && <div className={styles.error}>{error}</div>}
 
       {vagas.length === 0 ? (

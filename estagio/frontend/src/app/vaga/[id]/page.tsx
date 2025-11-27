@@ -42,6 +42,7 @@ export default function VagaDetalhePage() {
 
     const [jaInscrito, setJaInscrito] = useState(false);
     const [inscrevendo, setInscrevendo] = useState(false);
+    const [user, setUser] = useState<any | null>(null);
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -53,6 +54,7 @@ export default function VagaDetalhePage() {
         const fetchVagaEAvaliacoes = async () => {
             try {
                 const userObj = JSON.parse(user);
+                setUser(userObj);
                 
                 // Buscar vaga usando rewrite do Next.js (/api -> http://localhost:8080/api)
                 const token = localStorage.getItem('token');
@@ -71,12 +73,15 @@ export default function VagaDetalhePage() {
                 setMedia(statsData.mediaNotas || 0);
 
                 // Verificar se já está inscrito
-                const inscricoesResponse = await fetch(`/api/inscricoes/estudante/${userObj.id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const inscricoes = await inscricoesResponse.json();
-                const jainscrito = inscricoes.some((insc: any) => insc.vaga.id === parseInt(vagaId));
-                setJaInscrito(jainscrito);
+                // buscar inscrições só se o usuário for um estudante
+                if (userObj.role === 'estudante') {
+                    const inscricoesResponse = await fetch(`/api/inscricoes/estudante/${userObj.id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const inscricoes = await inscricoesResponse.json();
+                    const jainscrito = inscricoes.some((insc: any) => insc.vaga.id === parseInt(vagaId));
+                    setJaInscrito(jainscrito);
+                }
             } catch (err) {
                 setError('Erro ao carregar vaga');
                 console.error(err);
@@ -210,12 +215,13 @@ export default function VagaDetalhePage() {
                     <p>{vaga.descricao || 'Sem descrição disponível'}</p>
                 </div>
 
-                <div className={styles.acaoBox}>
-                    {jaInscrito ? (
+                    <div className={styles.acaoBox}>
+                    {user && user.role === 'estudante' ? (
+                        jaInscrito ? (
                         <div className={styles.jaInscrito}>
                             <p>✅ Você já está inscrito nesta vaga</p>
                         </div>
-                    ) : (
+                        ) : (
                         <button
                             onClick={handleInscricao}
                             disabled={inscrevendo}
@@ -223,6 +229,11 @@ export default function VagaDetalhePage() {
                         >
                             {inscrevendo ? 'Inscrevendo...' : '📝 Se Inscrever Nesta Vaga'}
                         </button>
+                        )
+                    ) : (
+                        <div className={styles.infoMessage}>
+                            <p>Apenas estudantes podem se inscrever nesta vaga.</p>
+                        </div>
                     )}
                 </div>
             </div>

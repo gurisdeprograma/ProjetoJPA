@@ -46,7 +46,8 @@ export default function AdminStatsPage() {
 
   return (
     <div className={styles.container}>
-      <h1>Dashboard Administrativo</h1>
+      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <h1 className={styles.pageTitle}>Dashboard Administrativo</h1>
       {error && <div className={styles.error}>{error}</div>}
 
       {stats ? (

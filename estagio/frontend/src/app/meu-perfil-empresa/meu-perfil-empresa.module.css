@@ -147,6 +147,54 @@
   line-height: 1.5;
 }
 
+.areasContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #f2f2f2;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.areasDisplay {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.areaBadge {
+  background: #e0f7fa;
+  color: #00796b;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.vagaItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.vagaLink {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.vagaLink:hover {
+  text-decoration: underline;
+}
+
+.vagaStatus { color: #999; font-size: 13px; }
+
 .buttonGroup {
   display: flex;
   gap: 10px;

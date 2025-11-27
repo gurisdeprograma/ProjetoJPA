@@ -35,12 +35,23 @@ export default function AdminUsuariosPage() {
 
   const fetchUsuarios = async (token: string) => {
     try {
-      const res = await fetch('/api/usuarios', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Erro ao buscar usuários');
-      const data = await res.json();
-      setUsuarios(Array.isArray(data) ? data : []);
+      // buscar estudantes, empresas e administradores e unificar
+      const [estRes, empRes, admRes] = await Promise.all([
+        fetch('/api/estudantes', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/empresas', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/administradores', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+
+      const estudantes = estRes.ok ? await estRes.json() : [];
+      const empresas = empRes.ok ? await empRes.json() : [];
+      const administradores = admRes.ok ? await admRes.json() : [];
+
+      const combined: Usuario[] = [];
+      estudantes.forEach((e: any) => combined.push({ id: e.id, username: e.nome, role: 'estudante' }));
+      empresas.forEach((e: any) => combined.push({ id: e.id, username: e.nome, role: 'empresa' }));
+      administradores.forEach((a: any) => combined.push({ id: a.id, username: a.nome, role: 'admin' }));
+
+      setUsuarios(combined);
     } catch (err) {
       console.error(err);
       setError('Não foi possível carregar usuários');
@@ -69,7 +80,8 @@ export default function AdminUsuariosPage() {
 
   return (
     <div className={styles.container}>
-      <h1>Gerenciar Usuários</h1>
+      <Link href="/dashboard" className={styles.backBtn}>← Voltar</Link>
+      <h1 className={styles.pageTitle}>Gerenciar Usuários</h1>
       {error && <div className={styles.error}>{error}</div>}
 
       {usuarios.length === 0 ? (

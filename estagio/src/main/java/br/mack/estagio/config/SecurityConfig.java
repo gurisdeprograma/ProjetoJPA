@@ -53,13 +53,15 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authz -> authz
                 // Endpoints públicos necessários para registro e login
-                .requestMatchers("/api/estudantes/registro").permitAll()
-                .requestMatchers("/api/empresas/registro").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
+                // Note: `server.servlet.context-path` is set to `/api` in application.properties,
+                // but `requestMatchers` expects paths relative to the servlet context (without `/api`).
+                .requestMatchers("/estudantes/registro").permitAll()
+                .requestMatchers("/empresas/registro").permitAll()
+                .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
-                // Nota: Em produção seria recomendado usar `.authenticated()` para outros endpoints
-                // e remover esta permissão geral. Para dev/staging, deixar `.permitAll()` facilita testes.
-                .anyRequest().permitAll()
+                // Exige autenticação para todos os endpoints não explicitamente liberados.
+                // Mantemos os endpoints de registro/login e H2Console como públicos.
+                .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
 

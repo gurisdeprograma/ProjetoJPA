@@ -18,6 +18,12 @@ console.log('✅ API_URL configurada para:', API_URL, '(reescrita para http://lo
 // Adicionar token ao header se existir
 api.interceptors.request.use((config) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    // Não adicionar o header Authorization para endpoints de login/registro
+    const skipAuthFor = ['/auth/login', '/estudantes/registro', '/empresas/registro'];
+    if (config.url && skipAuthFor.some(path => config.url && config.url.includes(path))) {
+        console.log('🔒 Skipping auth header for:', config.url);
+        return config;
+    }
     if (token && token !== 'undefined' && token !== 'null' && token.trim().length > 0) {
         config.headers.Authorization = `Bearer ${token}`;
         console.log('📤 Token adicionado ao header');
